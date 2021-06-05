@@ -225,3 +225,117 @@ mesela eski tip ile devam etseydik ve color, size, ve baska bir spesifikasyon ic
   <img width="701" alt="Screen Shot 2021-06-05 at 7 01 04 PM" src="https://user-images.githubusercontent.com/31994778/120897742-67f87c80-c630-11eb-92f5-c89d805e2996.png">
  
 Credits to -> [Maysara Alhindi](https://stackoverflow.com/users/5503714/maysara-alhindi "Maysara Alhindi") on [Answer](https://stackoverflow.com/questions/56860/what-is-an-example-of-the-liskov-substitution-principle 'Answer')
+
+  <h3> 4 - ISP / Interface Segragation Principle</h3>
+  
+  >Don't  put too many elements in an interface!
+  
+  <h5>Say that we have an interface for a machine that defines methods for what a modern-day printer does</h5>
+  
+```python
+  class Machine:
+    def print(self):
+        raise NotImplementedError
+
+    def fax(self):
+        raise NotImplementedError
+
+    def scan(self):
+        raise NotImplementedError
+```
+  
+And then, we want to create our ModernPrinter class and implement Machine interface.
+  
+```python
+  class ModernPrinter(Machine):
+    def print(self):
+        # does something
+        pass
+
+    def fax(self):
+        # does something
+        pass
+
+    def scan(self):
+        # does something
+        pass
+```
+However, if we have an old-fashioned printer, we won't be using ```fax``` and ```scan``` methods, which in turn may be problematic.
+
+```python
+  class OldPrinter(Machine):
+    def print(self):
+        # does something
+        pass
+
+    def fax(self):
+        # no op
+        pass
+
+    def scan(self):
+        # no op
+        pass
+```
+  
+  <h5>Here, we are not using these methods and one way is to pass the method and not do anything, another method is to raise some error</h5>
+  
+  * passing the method directly won't be very good since we will not be doing anything with that method and if we don't do anything with it why did we implement it in the first place?
+  * raising error won't be a good practice since someone may use the method in their code and if the code contains many thousand lines of code it will be hard to debug the problem and find the exception raised.
+  
+  
+In a situation like this, we should split our methods into different interfaces. In this way, an old printer can only implement ```print()``` method, and a modern printer can implement ```print()```, ```scan()```, and ```fax()``` methods. This is what <b>Interface Segregation</b> suggests.
+  
+```python
+  class Printer:
+    @abstractmethod
+    def print(self):
+        raise NotImplementedError
+
+
+class Faxer:
+    @abstractmethod
+    def fax(self):
+        raise NotImplementedError
+
+
+class Scanner:
+    @abstractmethod
+    def scan(self):
+        raise NotImplementedError
+```
+  
+```python
+  class ModernPrinter(Printer, Faxer, Scanner):
+    def print(self):
+        # does something
+        pass
+
+    def fax(self):
+        # does something
+        pass
+
+    def scan(self):
+        # does something
+        pass
+```
+  
+```python
+  class OldPrinter(Printer):
+    def print(self):
+        # does something
+        pass
+```
+  
+```python
+printer = ModernPrinter()
+printer.fax()
+printer.scan()
+printer.print()
+
+old_printer = OldPrinter()
+old_printer.print()
+```
+  
+  
+  
+    
