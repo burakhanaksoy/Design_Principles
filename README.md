@@ -213,3 +213,15 @@ mesela eski tip ile devam etseydik ve color, size, ve baska bir spesifikasyon ic
     for item in bf.filter(items, large_blue):
         print(f'\t{item.name} is blue and large.')
 ```
+  
+  <h3> 3 - LSP / Liskov Substitution Principle</h3>
+  
+  >Substitutability is a principle in object-oriented programming stating that, in a computer program, if S is a subtype of T, then objects of type T may be replaced with objects of type S without altering any of the desirable properties of the program
+  
+  <h5>Liskov Substitution Principle states that if you are inheriting from a base class, the base class cannot have anything that will break the functioning of the child class..</h5>
+
+  - ![#f03c15](https://via.placeholder.com/15/f03c15/000000?text=+) `derived classes should be able to extend their base classes without changing their behavior.`
+  
+  <img width="701" alt="Screen Shot 2021-06-05 at 7 01 04 PM" src="https://user-images.githubusercontent.com/31994778/120897742-67f87c80-c630-11eb-92f5-c89d805e2996.png">
+ 
+Credits to -> [Maysara Alhindi](https://stackoverflow.com/users/5503714/maysara-alhindi "Maysara Alhindi") on [Answer](https://stackoverflow.com/questions/56860/what-is-an-example-of-the-liskov-substitution-principle 'Answer')
