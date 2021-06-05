@@ -195,4 +195,21 @@ Note that we use ```pass``` operator since we will merely use these classes for 
     for item in bf.filter(items, spec):
         print(f'{item.name} is green.')
   ```
-  
+  <h5>Yani aslinda OCP'yi kullanmamizin temel sebebi degisikliklerin surekli olacagini dusunup yeni requirementlarin(mesela yeni bir filtreleme isleminin) cok daha rahat bir sekilde implemente edilmesini saglamak.Dizayni en basta bu sekilde tutmamiz, buyuyen ve karmasiklasan yapinin daha rahat kontrol edilebilmesini sagliyor.Bunu soyle dusunebiliriz.</h5>
+ 
+mesela eski tip ile devam etseydik ve color, size, ve baska bir spesifikasyon icin kontrol saglamamiz gerekseydi bu sefer ```def check_size_color_other_function(self)``` gibi bir kod yazacaktik bu da en az 10-15 satir bir kod olacakti. Halbuki OCP ile bunu ```AndSpecification``` class'ina args ile tanitarak yapabilir ve tek satirda bu isi cozebiliriz... 
+
+  ```python
+  # Implementing AndSpecification, [both Blue and Large object]
+    print('Blue and Large products:')
+    blue = ColorSpecification(Color.BLUE)
+    and_spec = AndSpecification(blue, large)
+
+    for item in bf.filter(items, and_spec):
+        print(f'\t{item.name} is blue and large.')
+
+    # We can even do like this
+    large_blue = large & blue
+    for item in bf.filter(items, large_blue):
+        print(f'\t{item.name} is blue and large.')
+```
