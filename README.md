@@ -434,3 +434,8 @@ This has the following advantages:
  - if, in the future, we have to use another data structure, e.g., dict, we don't have to change ```Research``` class at all. 
  - The only change would be is to create a new class, i.e., ```RelationshipsDict``` and implement ```def find_all_children_of(self, name):``` method accordingly.
  - This is very convenient since we won't have to tinker with high-level modules and, if needed, only extend on the low-level ones. (such as creating new classes and having ```Research``` inherit from classes that implement them.)
+
+  
+<h2>Summary
+  
+  <img width="1136" alt="Screen Shot 2021-06-06 at 3 36 24 PM" src="https://user-images.githubusercontent.com/31994778/120924574-122dde00-c6dd-11eb-8331-be21a406538c.png">
