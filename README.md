@@ -336,6 +336,101 @@ old_printer = OldPrinter()
 old_printer.print()
 ```
   
+<h3> 5 - DIP / Dependency Inversion Principle</h3>
+
+>DIP states that high level classes or high level modules in your code should not directly depend on low level modules. Instead, they should depend on abstractions.
   
+Imagine that we want to create a geneology application that finds out the children of a parent. We can come up with a code like this:
+  ```python
+  from enum import Enum
+
+
+class Relationship(Enum):
+    PARENT = 0
+    CHILD = 1
+    SIBLING = 2
+
+
+class Person:
+    def __init__(self, name):
+        self.name = name
+
+
+class Relationships:
+    def __init__(self):
+        self.relationship_list = []
+
+    def add_parent_and_child(self, parent, relationship_type, child):
+        self.relationship_list.append(
+            (parent, relationship_type, child)
+        )
+  ```
+  <h5>Here, we have an enum for relationship classification, a class called Person, and a class called Relationships that is used for adding a parent-child to a list </h5>
   
-    
+  Let's say that I want to implement a class called ```Research``` to reach to ```relationship_list``` and print out parents and children.
+  
+  ```python
+  class Research:
+    def __init__(self, relationships):
+        self.relationships = relationships.relationship_list
+
+        for r in self.relationships:
+            if r[0].name == 'Ahmet' and r[1] == Relationship.PARENT:
+                print(f'Ahmet has a child named {r[2].name}')
+  ```
+  
+Good? <b>No</b>:confused:
+  
+<h5>Because</h5>
+  
+- ```Research class relies heavily on the relationshi_list list of Relationships class```
+- ```If we change the list data structure to a dictionary one day, our Research class would crash, since it's using indexing r[0], r[2] as such...```
+- ```Imagine we use a mongodb instead of a list here and we want to switch to a relational, like SQL, db. This means our Research class will crash again...```
+  
+<b>How to fix it?</b>
+  
+>We should use an interface for the low level module. The idea is that Research should not depend on the concrete implementation, it should depend on some sort of an abstraction that can subsequently change.
+ 
+ So, let's define a class ```RelationshipBrowser``` with an abstractmethod ```find_all_children_of```
+ 
+  ```python
+  class RelationshipBrowser:
+    @abstractmethod
+    def find_all_children_of(self, name):
+        pass
+  ```
+  <b>This method needs to be implemented in whoever inherits from ```RelationshipBrowser``` class.</b>
+  
+  Let's make ```Relationship``` class inherit from ```RelationshipBrowser```.
+  
+  ```python
+  class Relationships(RelationshipBrowser):
+    def __init__(self):
+        self.relationship_list = []
+
+    def add_parent_and_child(self, parent, relationship_type, child):
+        self.relationship_list.append(
+            (parent, relationship_type, child)
+        )
+
+    def _find_all_children_of(self, name):
+        for r in self.relationship_list:
+            if r[0].name == name and r[1] == Relationship.PARENT:
+                yield r[2].name
+```
+
+>As you can see, we also implemented ```_find_all_children_of(self, name)``` method in our class in order to handle everything about relationships within this class. In this way, we eliminate the dependency of a high-level module (Research) from a low-level module (Relationships).
+  
+<b>Now we can get rid of everything inside the ```Research``` class and re-implement it as follows</b>
+
+  ```python
+  class Research(Relationships):
+    def __init__(self, browser, name):
+        for n in browser._find_all_children_of(name):
+            print(f'{name} has a child named {n}')
+```
+
+This has the following advantages:
+ - if, in the future, we have to use another data structure, e.g., dict, we don't have to change ```Research``` class at all. 
+ - The only change would be is to create a new class, i.e., ```RelationshipsDict``` and implement ```def find_all_children_of(self, name):``` method accordingly.
+ - This is very convenient since we won't have to tinker with high-level modules and, if needed, only extend on the low-level ones. (such as creating new classes and having ```Research``` inherit from classes that implement them.)
