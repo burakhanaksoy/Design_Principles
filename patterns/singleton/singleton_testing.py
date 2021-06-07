@@ -25,11 +25,13 @@ class Database(metaclass=Singleton):
     def __init__(self):
         print('Loading database...')
 
+
+class RecordFinder():
     def find_total_population(self, cities):
 
         result = 0
         for c in cities:
-            result += self._db[c]
+            result += Database()._db[c]
 
         return result
 
@@ -43,9 +45,9 @@ class SingletonTests(unittest.TestCase):
         self.assertEqual(db1, db2)
 
     def test_total_population(self):
-        db = Database()
+        rf = RecordFinder()
 
-        res = db.find_total_population(['Tokyo', 'Osaka'])
+        res = rf.find_total_population(['Tokyo', 'Osaka'])
         expected = 34000000 + 19000000
 
         self.assertEqual(res, expected)
