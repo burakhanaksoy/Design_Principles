@@ -113,3 +113,79 @@ Outputs
 Creating database...
 True
 ```
+<h2>Shared State Implementation</h2>
+
+```python
+class CEO:
+
+    _shared_state = {
+        'name': 'Burak',
+        'age': 25
+    }
+
+    def __init__(self):
+        self.__dict__ = self._shared_state
+
+    def __str__(self):
+        return f'name: {self.name} age: {self.age}'
+```
+
+```python
+if __name__ == '__main__':
+    ceo1 = CEO()
+    ceo2 = CEO()
+
+    print(ceo1 == ceo2)
+```
+
+```
+False
+```
+
+<h4>However, ceo1 and ceo2 are not the same objects</h4>
+
+So, we can do something like this..
+
+```python
+class Monostate:
+    _shared_state = {
+        'name': 'Burak',
+        'age': 25
+    }
+
+    _instances = {}
+
+    def __new__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Monostate, cls).__new__(
+                cls, *args, **kwargs)
+            cls._instances[cls].__dict__ = cls._shared_state
+
+        return cls._instances[cls]
+```
+
+```python
+class CEO(Monostate):
+
+    def __str__(self):
+        return f'name: {self.name} age: {self.age}'
+```
+
+```python
+if __name__ == '__main__':
+    ceo1 = CEO()
+    ceo2 = CEO()
+    print(ceo1)
+    print(ceo1 == ceo2)
+```
+
+Outputs
+
+```
+name: Burak age: 25
+True
+```
+
+<h3>Opinion</h3>
+
+Probably the best approach is ```decorator implementation```...
