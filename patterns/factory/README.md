@@ -80,7 +80,6 @@ class Point:
 
 As you can see, this is a much better approach in that
 - We don't have to make an if check
-- We have a single initializer
 - @staticmethod usage is understandable and coherent
 - Open-closed principle stays intact
 
