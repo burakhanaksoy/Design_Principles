@@ -286,7 +286,7 @@ However, if we have an old-fashioned printer, we won't be using ```fax``` and ``
 In a situation like this, we should split our methods into different interfaces. In this way, an old printer can only implement ```print()``` method, and a modern printer can implement ```print()```, ```scan()```, and ```fax()``` methods. This is what <b>Interface Segregation</b> suggests.
   
 ```python
-  class Printer:
+class Printer:
     @abstractmethod
     def print(self):
         raise NotImplementedError
