@@ -118,3 +118,9 @@ class PointFactory:
 In this case, we are kind of breaking ```dependency inversion principle``` in which modules should be loosely coupled to one another. However, there's nothing much we can do about this.
 
 <b>All in all, factory methods and factory classes are very good  because they alleviate complex initialization processes, writing lots of lines inside __init__ method, and help building scalable applications.</b>
+
+>Summary
+
+- A factory method is a static(generally) method that creates objects
+- A factory is an entity that can take care of object creation
+- A factory can be external or reside inside the object as an inner class
