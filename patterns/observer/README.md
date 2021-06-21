@@ -201,7 +201,80 @@ Sorry, you cannot drive.
 You can drive now.
 ```
 
-<b>As you can see, `person_changed` method unsubscribed from `property_changed` event as soon as person's age hits 16.
+<b>As you can see, `person_changed` method unsubscribed from `property_changed` event as soon as person's age hits 16.</b>
 
 
 >This is very powerful since we let one class to notify another class as soon as some change in an attribute occurs. We did this with high cohesion and loose coupling. 
+
+<h3>Caveat: Property Dependency</h3>
+
+Trying to observe a change in a property that is dependent on another property can be problematic!
+  
+Assume that we have the following getter
+  
+```python
+@property
+def can_vote(self):
+    return self.age >= 18
+```
+  
+  Here, where do we call `self.property_changed()`? Since `can_vote` is actually dependent on `self.age`, it would be best to call `self.property_changed()` inside `self.age`.
+  
+  So, we can implement something like this
+  
+  ```python
+  @age.setter
+    def age(self, value):
+        """ Setter for _age """
+        if self._age == value:
+            return
+
+        old_can_vote = self.can_vote
+
+        self._age = value
+        self.property_changed('age', value)
+
+        if old_can_vote != self.can_vote:
+            self.property_changed('can_vote', self.can_vote)
+```
+
+Here, we are caching `can_vote` by `old_can_vote`.
+
+Then, we can change `person_changed` method as
+
+```python
+def person_changed(self, name, value):
+        if name == 'can_vote':
+            print(f'Voting ability changed to {self.person.can_vote}')
+        if name == 'age':
+            if self.person.age < 16:
+                print('You can\'t drive')
+            else:
+                print('You can drive')
+```
+
+So, when we run
+
+```python
+def main():
+    person = Person()
+    trf = TrafficAuthority(person)
+
+    for age in range(15,20):
+        person.age = age
+
+
+if __name__ == '__main__':
+    main()
+```
+
+we get
+
+```
+You can't drive
+You can drive
+You can drive
+You can drive
+Voting ability changed to True
+You can drive
+```
