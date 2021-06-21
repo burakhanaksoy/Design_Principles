@@ -18,7 +18,12 @@ def call_doctor(name, address):
     print(f'{name} needs doctor at {address}')
 
 
-if __name__ == "__main__":
+def main():
     person = Person('Burak', '221 B Baker Street')
+    person.falls_ill.append(lambda name, address: print(f'{name} falls ill.'))
     person.falls_ill.append(call_doctor)
     person.catch_a_cold()
+
+
+if __name__ == "__main__":
+    main()
