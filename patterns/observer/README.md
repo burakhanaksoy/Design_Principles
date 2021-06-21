@@ -278,3 +278,6 @@ You can drive
 Voting ability changed to True
 You can drive
 ```
+<h2>Summary</h2>
+
+<img width="843" alt="Screen Shot 2021-06-21 at 11 09 06 PM" src="https://user-images.githubusercontent.com/31994778/122821681-cfc3ee00-d2e5-11eb-984e-b43ea25e39ea.png">
