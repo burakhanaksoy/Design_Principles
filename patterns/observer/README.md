@@ -100,3 +100,108 @@ When we run `main()`, we get
 Burak falls ill.
 Burak needs doctor at 221 B Baker Street
 ```
+<h2>Property Observer</h2>
+
+Since Python has `@property` that we can use as decorators, and also since we just set up the <b>"Observer Design Pattern"</b>, we can merge these two ideas together and set up the so called `Property Observers`.
+
+>Basically, a <b>Property Observer</b> tells us whenever a certain property is changed.
+
+<h3>Implementation Steps</h3>
+
+1- First, we stick to our observer design pattern implementation.
+
+```python
+class Event(list):
+    def __call__(self, *args, **kwargs):
+        for item in self:
+            item(*args, **kwargs)
+```
+
+2- Second, we create `PropertyObservable` class
+
+```python
+class PropertyObservable:
+    def __init__(self):
+        self.property_changed = Event()
+```
+
+This class only have `property_changed` attribute, which is an `Event` instance.
+The idea is to inherit from this class and use `property_changed` instance that it offers.
+
+3- Third, set up the class whose property you want to observe.
+
+```python
+class Person(PropertyObservable):
+    """ Unit class for Person """
+
+    def __init__(self, age=0):
+        super().__init__()
+        self._age = age
+```
+
+Note that we have `_age` property since we want it to be a private attribute.
+
+4- Now, let's write down getter and setter for `_age` attribute.
+
+```python
+@property
+    def age(self):
+        """ Getter for _age """
+        return self._age
+
+    @age.setter
+    def age(self, value):
+        """ Setter for _age """
+        if self._age == value:
+            return
+        self._age = value
+        self.property_changed('age', value)
+```
+
+Here, `Age setter` checks if the new age is the same as the old one. If not, do nothing, if is, set the new age and call `self.property_changed('age', value)`
+
+5- Create `TrafficAuthority` class
+
+```python
+class TrafficAuthority:
+    """ Unit class for TrafficAuthority """
+
+    def __init__(self, person):
+        self.person = person
+        self.person.property_changed.append(self.person_changed)
+
+    def person_changed(self, name, value):
+        if name == 'age':
+            if self.person.age < 16:
+                print('Sorry, you cannot drive.')
+            else:
+                print('You can drive now.')
+                self.person.property_changed.remove(self.person_changed)
+```
+
+6- Test!
+
+```python
+def main():
+    person = Person()
+    trf = TrafficAuthority(person)
+
+    person.age = 15
+    person.age = 17
+
+
+if __name__ == '__main__':
+    main()
+```
+
+This outputs 
+
+```
+Sorry, you cannot drive.
+You can drive now.
+```
+
+<b>As you can see, `person_changed` method unsubscribed from `property_changed` event as soon as person's age hits 16.
+
+
+>This is very powerful since we let one class to notify another class as soon as some change in an attribute occurs. We did this with high cohesion and loose coupling. 
